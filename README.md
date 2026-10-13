@@ -46,6 +46,19 @@ Auto-arrange channel fields into publish layout tabs by naming convention. Compa
 7. Check the tabs you want to create
 8. Click **Create Tabs**
 
+## Security and notes
+
+- The Field Grouper screens are restricted to Super Admins, because they rewrite publish layouts.
+- Only fields still in the "Publish" tab are moved. Fields already placed in their own tabs are left alone, so re-running is safe.
+- Tab labels are stored as plain text (HTML is stripped).
+- Back up (or export) your layouts before applying changes to a production site.
+
+## Documentation
+
+[reizoko.jp/en/addons/field-grouper.html](https://www.reizoko.jp/en/addons/field-grouper.html)
+
+More add-ons: [reizoko.jp](https://www.reizoko.jp/en/addons.html)
+
 ## License
 
-MIT
+[MIT](LICENSE)
