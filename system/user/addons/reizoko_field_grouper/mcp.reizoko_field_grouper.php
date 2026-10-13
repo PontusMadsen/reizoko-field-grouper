@@ -7,6 +7,8 @@ class Reizoko_field_grouper_mcp
 	 */
 	public function index()
 	{
+		$this->_require_super_admin();
+
 		$channels = ee('Model')->get('Channel')
 			->order('channel_title', 'asc')
 			->all();
@@ -129,6 +131,8 @@ class Reizoko_field_grouper_mcp
 	 */
 	public function preview()
 	{
+		$this->_require_super_admin();
+
 		$layout_id = (int) ee()->input->post('layout_id');
 		$source_tab_id = ee()->input->post('source_tab_id');
 		$delimiter = ee()->input->post('delimiter') ?: '_';
@@ -163,7 +167,7 @@ class Reizoko_field_grouper_mcp
 
 		// Get source tab's field IDs (these are the "base" fields)
 		$source_field_ids = array();
-		foreach ($source_tab['fields'] as $f)
+		foreach (($source_tab['fields'] ?? array()) as $f)
 		{
 			if (isset($f['field']) && strpos($f['field'], 'field_id_') === 0)
 			{
@@ -293,12 +297,14 @@ class Reizoko_field_grouper_mcp
 	 */
 	public function apply()
 	{
+		$this->_require_super_admin();
+
 		$layout_id = (int) ee()->input->post('layout_id');
 		$source_tab_id = ee()->input->post('source_tab_id');
 		$delimiter = ee()->input->post('delimiter') ?: '_';
 		$position = ee()->input->post('affix_position') ?: 'suffix';
 		$token_labels = ee()->input->post('token_labels') ?: '';
-		$selected_tokens = ee()->input->post('tokens');
+		$selected_tokens = (array) ee()->input->post('tokens');
 
 		if (empty($selected_tokens))
 		{
@@ -341,7 +347,7 @@ class Reizoko_field_grouper_mcp
 
 		// Get source field models
 		$source_field_ids = array();
-		foreach ($source_tab['fields'] as $f)
+		foreach (($source_tab['fields'] ?? array()) as $f)
 		{
 			if (isset($f['field']) && strpos($f['field'], 'field_id_') === 0)
 			{
@@ -399,7 +405,7 @@ class Reizoko_field_grouper_mcp
 			$token_field_ids[$token] = array();
 
 			// For each source field, find its suffixed counterpart
-			foreach ($source_tab['fields'] as $src_entry)
+			foreach (($source_tab['fields'] ?? array()) as $src_entry)
 			{
 				if ( ! isset($src_entry['field']) || strpos($src_entry['field'], 'field_id_') !== 0)
 				{
@@ -502,6 +508,17 @@ class Reizoko_field_grouper_mcp
 	}
 
 	/**
+	 * Changing publish layouts is an admin task, so restrict to Super Admins
+	 */
+	private function _require_super_admin()
+	{
+		if ( ! ee('Permission')->isSuperAdmin())
+		{
+			show_error(lang('unauthorized_access'), 403);
+		}
+	}
+
+	/**
 	 * Extract custom field IDs from layout structure
 	 */
 	private function _extract_field_ids($field_layout)
@@ -596,7 +613,7 @@ class Reizoko_field_grouper_mcp
 				continue;
 			}
 
-			$map[trim($token)] = trim($label);
+			$map[trim($token)] = trim(strip_tags($label));
 		}
 
 		return $map;

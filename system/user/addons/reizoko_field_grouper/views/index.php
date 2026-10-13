@@ -104,7 +104,7 @@
 </div>
 
 <script>
-var layoutsMap = <?= json_encode($layouts_map) ?>;
+var layoutsMap = <?= json_encode($layouts_map, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
 
 document.getElementById('channel-select').addEventListener('change', function() {
 	var sel = document.getElementById('layout-select');
